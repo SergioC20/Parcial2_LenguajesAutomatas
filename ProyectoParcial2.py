@@ -1,24 +1,9 @@
 import re
 from graphviz import Digraph
 
-# Función para imprimir la tabla de transición
-def imprimirtablatransicion():
-    tabla = [
-        ['Estado', 'a', 'b', '*', '#', 'Otro'],
-        ['0', '1', '-', '-', '-', '-'],
-        ['1', '-', '2', '-', '-', '-'],
-        ['2', '3', '-', '-', '-', '-'],
-        ['3', '3', '1', '4', '-', '-'],
-        ['4', '3', '1', '-', '4', '-']
-    ]
-    print("Tabla de transición de estados:")
-    for fila in tabla:
-        print(' | '.join(f"{celda:^5}" for celda in fila))
-    print('-' * 29)
-
 # Genera tabla de frecuencia para imprimir
 def generarTabla(mensaje):
-
+    pilaErrores = []
     estado = '0'
     tabla = [['|||'],['|0|'],['|1|'],['|2|'],['|3|'],['|4|']]
     pasarG4 = False
@@ -33,6 +18,10 @@ def generarTabla(mensaje):
             else:
                 tabla[1].append("|0|")
 
+                # Generar pilas errores 
+                pilaErrores.append(i)
+             
+
          
         
         elif estado == "1":
@@ -42,6 +31,8 @@ def generarTabla(mensaje):
                 estado = '2'
             else:
                 tabla[2].append("|1|")
+
+                pilaErrores.append(i)
 
 
         elif estado == "2":
@@ -82,9 +73,16 @@ def generarTabla(mensaje):
         for z in range (len(tabla)):
             if len(tabla[z]) < len(tabla[0]):
                 tabla[z].append("|-|")
-
+    
     for r in tabla:
         print(' '.join(map(str,r)))
+    print('\nPila de errores\n')
+    for z in pilaErrores:
+        print(z)
+
+    return(pilaErrores)
+
+    
 # Función para obtener el siguiente estado según la tabla de transición
 def obtener_siguiente_estado(estado_actual, caracter):
     tabla_transicion = {
@@ -130,8 +128,6 @@ def generar_arbol_derivacion(cadena, numero):  # Crea un nuevo gráfico para el 
     dot.render(f'arbol_derivacion_cadena_{numero}', format='png', cleanup=True)
 
 patron = re.compile("(.*a)(.*b)(a)(b\2|a*\*)(#+|a\2|b\3)")
-
-imprimirtablatransicion()
 print("\nValidación de cadenas:")
 
 try:
@@ -141,12 +137,17 @@ try:
             if re.fullmatch(patron, cadena):
                 print(f"Cadena {numero}: {cadena}")
                 print('---Es válido---')
+                print('Tabla de transiciones:\n')
+                pila = generarTabla(cadena)
+                
                 generar_arbol_derivacion(cadena, numero)  # Generar árbol
             else:
                 print(f"Cadena {numero}: {cadena}")
-                print('---No es válido---')
+                print('---No es válido---\n')
                 generar_arbol_derivacion(cadena, numero)  # Generar árbol   
 except FileNotFoundError:
     print("Error: No se pudo encontrar el archivo 'cadena.txt'.")
 except IOError:
     print("Error: Hubo un problema al leer el archivo 'cadena.txt'.")
+
+
