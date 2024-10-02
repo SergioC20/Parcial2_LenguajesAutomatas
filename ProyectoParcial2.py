@@ -16,6 +16,75 @@ def imprimirtablatransicion():
         print(' | '.join(f"{celda:^5}" for celda in fila))
     print('-' * 29)
 
+# Genera tabla de frecuencia para imprimir
+def generarTabla(mensaje):
+
+    estado = '0'
+    tabla = [['|||'],['|0|'],['|1|'],['|2|'],['|3|'],['|4|']]
+    pasarG4 = False
+    #Evalua el estado y actua de acuerdo al caracter leido y el estado
+    for i in mensaje:
+        i = "|" + i + "|"
+        if estado == "0":
+            tabla[0].append(i)
+            if i == "|a|":
+                tabla[1].append("|1|")
+                estado = '1'
+            else:
+                tabla[1].append("|0|")
+
+         
+        
+        elif estado == "1":
+            tabla[0].append(i)
+            if i == "|b|":
+                tabla[2].append("|2|")
+                estado = '2'
+            else:
+                tabla[2].append("|1|")
+
+
+        elif estado == "2":
+
+            tabla[0].append(i)
+            estado = "3"
+            
+
+           
+            tabla[3].append("|3|")
+            
+
+        elif estado == "3":
+            tabla[0].append(i)
+            if i == "|b|":
+                tabla[4].append("|1|")
+                estado = "1"
+            elif i == "|a|":
+                tabla[4].append("|3|")
+                estado = "3"
+            elif i == "|*|":
+                tabla[4].append("|4|")
+                estado = "4"
+            
+
+        elif estado == "4":
+            tabla[0].append(i)
+            if i == "|#|":
+                tabla[5].append("|4|")
+                estado = "4"
+            elif i == "|a|":
+                tabla[5].append("|1|")
+                estado = "1"
+            elif i == "|b|":
+                tabla[5].append("|2|")
+                estado = "2"
+            
+        for z in range (len(tabla)):
+            if len(tabla[z]) < len(tabla[0]):
+                tabla[z].append("|-|")
+
+    for r in tabla:
+        print(' '.join(map(str,r)))
 # Función para obtener el siguiente estado según la tabla de transición
 def obtener_siguiente_estado(estado_actual, caracter):
     tabla_transicion = {
